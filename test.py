@@ -17,7 +17,8 @@ class DIP(tk.Frame):
 
         menubar = tk.Menu(self.parent)
         self.parent.config(menu = menubar)
-
+        self.browseButton = tk.Button(self,text = "Browse",command = self.onOpen)
+        self.browseButton.grid(row =0,column=0)
         self.var = tk.IntVar()
         self.buttonradio1 = tk.Radiobutton(self, text="ColorTransformations", variable=self.var, value=1,
                                    command=self.ColorTransfer)
@@ -69,11 +70,32 @@ class DIP(tk.Frame):
         if self.var.get()== 1:
             if self.colorvar.get()=='RGB' and self.colorvar2.get()=='CMYK':
                 self.output = ct.RGBtoCMYK(self.fn)
-                # print(type(output))
-                #
-                # im = Image.fromarray(self.output,mode='')
-                # im.save("test.png")
-                # print(type(im))
+                filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fn = filename
+                self.img = Image.open(self.fn)
+                self.temp = self.img.save("test.ppm","ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file = "test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
+            elif self.colorvar.get()=='CMYK' and self.colorvar2.get()=='RGB':
+                self.output = ct.CMYKtoRGB(self.fn)
+                filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fn = filename
+                self.img = Image.open(self.fn)
+                self.temp = self.img.save("test.ppm","ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file = "test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
+            elif self.colorvar.get()=='RGB' and self.colorvar2.get()=='HSI':
+                self.output = ct.RGBtoHSV(self.fn)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
                 self.fn = filename
                 self.img = Image.open(self.fn)
@@ -87,6 +109,7 @@ class DIP(tk.Frame):
                 self.label2.image = photo
 
 
+
     def onOpen(self):
         #Open Callback
         ftypes = [('Image Files', '*.tif *.jpg *.png')]
@@ -95,7 +118,10 @@ class DIP(tk.Frame):
         self.fn = filename
         #print self.fn #prints filename with path here
         self.setImage()
-
+    def setImage(self):
+        self.img = Image.open(self.fn)
+        photo = ImageTk.PhotoImage(self.img)
+        self.label1.configure(image=photo)
     #def onError(self):
         #box.showerror("Error", "Could not open file")
 
