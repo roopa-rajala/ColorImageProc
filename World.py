@@ -13,7 +13,7 @@ class GUI:
 
         self.top.title("Color Image Processing")
         self.fileName = "C:/Users/Roopa/Documents/GitHub/assignment-2-roopa-rajala/Lenna.png"
-        self.outputfileName="C:/Users/Roopa/PycharmProjects/ColorImageProc/test.jpg"
+        self.outputfileName="C:/Users/Roopa/PycharmProjects/ColorImageProc/Lenna0.jpg"
         self.layout = Canvas(self.top, width=600, height=600, bg='white')
         self.layout2 = Canvas(self.top, width=600, height=600, bg='white')
         self.frame1 = Frame(self.top)
@@ -30,12 +30,17 @@ class GUI:
         self.frame2.grid(row=1, column=0)
         self.convertButton = tkinter.Button(self.frame1, text="Convert", bg="green", command=self.start)
         self.convertButton.grid(row=5, column=1)
-
-        self.layout.grid(row=1, column=0)
-        pic = ImageTk.PhotoImage(file=self.fileName)
-        inputPic = self.layout.create_image(250, 250, image=pic)
+        pic = ImageTk.PhotoImage(Image.open(self.fileName))
+        self.inputPic = Label(self.frame1,image = pic)
+        self.inputPic.grid(row = 6,column = 0)
+        pic1 = ImageTk.PhotoImage(Image.open(self.outputfileName))
+        self.outputPic = Label(self.frame1, image=pic1)
+        self.outputPic.grid(row=6, column=1)
+        # self.layout.grid(row=1, column=0)
+        # pic = ImageTk.PhotoImage(file=self.fileName)
+        # inputPic = self.layout.create_image(250, 250, image=pic)
         # self.layout2.grid(row=1, column=1)
-        # pic2 = ImageTk.PhotoImage(file=self.fileName)
+        # pic2 = ImageTk.PhotoImage(file=self.outputfileName)
         # inputPic2 = self.layout2.create_image(250, 250, image=pic2)
         self.top.mainloop()
 
@@ -71,11 +76,11 @@ class GUI:
                 im = Image.fromarray(output,mode = 'CMYK')
                 im.save("test.jpg")
                 print(type(im))
-                op = ImageTk.PhotoImage(file=self.outputfileName)
+                op = ImageTk.PhotoImage(Image.open(self.outputfileName))
                 print(type(op))
-                self.layout2.grid(row=1, column=1)
-                # inputPic2.itemconfig(image = op)
-                inputPic2 = self.layout2.create_image(250, 250, image=op)
+                # self.layout2.grid(row=1, column=1)
+                self.inputPic.configure(image = op)
+                #inputPic2 = self.layout2.create_image(250, 250, image=op)
                 # inputPic2 = Label(frame2, image=op)
                 # inputPic2.grid(row=6, column=2)
 
