@@ -6,7 +6,7 @@ from tkinter import filedialog
 from tkinter.colorchooser import *
 from IntensitySlicing import IntensitySlicing
 from ColorTransformations import ColorTransf
-
+from Filtering import Smoothing
 class DIP(tk.Frame):
     def __init__(self, parent):
         tk.Frame.__init__(self, parent)
@@ -26,9 +26,11 @@ class DIP(tk.Frame):
                                    command=self.ColorTransfer)
         self.buttonradio2 = tk.Radiobutton(self, text="PseudoColoring", variable=self.var, value=2,
                                    command=self.PseudoColor)
-
+        self.buttonradio3 = tk.Radiobutton(self, text="Smoothing & Sharpening", variable=self.var, value=3,
+                                           command=self.Filtering)
         self.buttonradio1.grid(row=1, column=0)
         self.buttonradio2.grid(row=1, column=1)
+        self.buttonradio3.grid(row=1, column=2)
         self.label1 = tk.Label(self, border = 25)
         self.label2 = tk.Label(self, border = 25)
         self.label1.grid(row = 6, column = 0)
@@ -65,22 +67,28 @@ class DIP(tk.Frame):
         button3 = tk.Radiobutton(self, text="Intensity Slicing", variable=self.pseudovar, value=1)
         button4 = tk.Radiobutton(self, text="Color Transformation", variable=self.pseudovar, value=2)
 
-        colorPick = tk.Button(self, text="Color Pick", bg="green", command=self.getColor)
+        # colorPick = tk.Button(self, text="Color Pick", bg="green", command=self.getColor)
 
         button3.grid(row=2, column=1)
         button4.grid(row=3, column=1)
-        colorPick.grid(row=2, column=2)
+        # colorPick.grid(row=2, column=2)
 
     def getColor(self):
         color = askcolor()
         l = list(color)
         nl = list(l[0])
 
-        print(nl)
+
+    def Filtering(self):
+        self.filtervar = tk.IntVar()
+        button3 = tk.Radiobutton(self, text="Smothing", variable=self.filtervar, value=1)
+        button4 = tk.Radiobutton(self, text="Sharpening", variable=self.filtervar, value=2)
+        button3.grid(row=2, column=2)
+        button4.grid(row=3, column=2)
     def setImage(self):
         ct = ColorTransf()
         i = IntensitySlicing
-
+        f = Smoothing
         if self.var.get()== 1:
             if self.colorvar.get()=='RGB' and self.colorvar2.get()=='CMYK':
                 self.output = ct.RGBtoCMYK(self.fn)
@@ -125,6 +133,34 @@ class DIP(tk.Frame):
             if self.pseudovar.get() == 1:
                 self.output = i.scale(i,self.fn, 50)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
+                self.temp = self.img.save("test.ppm", "ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file="test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
+        elif self.var.get() == 3:
+            if self.filtervar.get() == 1:
+                self.output = f.blurring(f, self.fn)
+                filename = "test.png"
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
+                self.temp = self.img.save("test.ppm", "ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file="test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
+
+            elif self.filtervar.get() == 2:
+                self.output = f.sharpening(f, self.fn)
+                filename = "test.png"
                 self.fnout = filename
                 self.img = Image.open(self.fnout)
                 self.temp = self.img.save("test.ppm", "ppm")
