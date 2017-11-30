@@ -3,6 +3,8 @@ from PIL import Image
 from PIL import ImageTk
 import numpy as np
 from tkinter import filedialog
+from tkinter.colorchooser import *
+from IntensitySlicing import IntensitySlicing
 from ColorTransformations import ColorTransf
 
 class DIP(tk.Frame):
@@ -31,18 +33,18 @@ class DIP(tk.Frame):
         self.label2 = tk.Label(self, border = 25)
         self.label1.grid(row = 6, column = 0)
         self.label2.grid(row = 6, column = 1)
-        filename = "C:/Users/Roopa/Documents/GitHub/assignment-2-roopa-rajala/Lenna.png"
-        self.fn = filename
-        self.img = Image.open(self.fn)
-        self.I = np.asarray(self.img)
-        l, h = self.img.size
-        text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
-        self.parent.geometry(text)
-        photo = ImageTk.PhotoImage(self.img)
-        self.label1.configure(image=photo)
-        self.label2.configure(image=photo)
-        self.label1.image = photo  # keep a reference!
-        self.label2.image = photo
+        # filename = "C:/Users/Roopa/Documents/GitHub/assignment-2-roopa-rajala/Lenna.png"
+        # self.fn = filename
+        # self.img = Image.open(self.fn)
+        # self.I = np.asarray(self.img)
+        # l, h = self.img.size
+        # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+        # self.parent.geometry(text)
+        # photo = ImageTk.PhotoImage(self.img)
+        # self.label1.configure(image=photo)
+        # self.label2.configure(image=photo)
+        # self.label1.image = photo  # keep a reference!
+        # self.label2.image = photo
         self.convertButton = tk.Button(self, text="Convert", bg="green", command=self.setImage)
         self.convertButton.grid(row=5, column=1)
 
@@ -59,20 +61,32 @@ class DIP(tk.Frame):
         dropdownFrom.grid(row =2,column=0)
         dropdownTo.grid(row = 4,column=0)
     def PseudoColor(self):
-        pseudovar = tk.IntVar()
-        button3 = tk.Radiobutton(self, text="Experiment1", variable=pseudovar, value=1)
-        button4 = tk.Radiobutton(self, text="Experiment2", variable=pseudovar, value=2)
+        self.pseudovar = tk.IntVar()
+        button3 = tk.Radiobutton(self, text="Intensity Slicing", variable=self.pseudovar, value=1)
+        button4 = tk.Radiobutton(self, text="Color Transformation", variable=self.pseudovar, value=2)
+
+        colorPick = tk.Button(self, text="Color Pick", bg="green", command=self.getColor)
+
         button3.grid(row=2, column=1)
         button4.grid(row=3, column=1)
+        colorPick.grid(row=2, column=2)
 
+    def getColor(self):
+        color = askcolor()
+        l = list(color)
+        nl = list(l[0])
+
+        print(nl)
     def setImage(self):
         ct = ColorTransf()
+        i = IntensitySlicing
+
         if self.var.get()== 1:
             if self.colorvar.get()=='RGB' and self.colorvar2.get()=='CMYK':
                 self.output = ct.RGBtoCMYK(self.fn)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
-                self.fn = filename
-                self.img = Image.open(self.fn)
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
                 self.temp = self.img.save("test.ppm","ppm")
                 # self.I = np.asarray(self.img)
                 # l, h = self.img.size
@@ -84,8 +98,8 @@ class DIP(tk.Frame):
             elif self.colorvar.get()=='CMYK' and self.colorvar2.get()=='RGB':
                 self.output = ct.CMYKtoRGB(self.fn)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
-                self.fn = filename
-                self.img = Image.open(self.fn)
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
                 self.temp = self.img.save("test.ppm","ppm")
                 # self.I = np.asarray(self.img)
                 # l, h = self.img.size
@@ -97,8 +111,8 @@ class DIP(tk.Frame):
             elif self.colorvar.get()=='RGB' and self.colorvar2.get()=='HSI':
                 self.output = ct.RGBtoHSV(self.fn)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
-                self.fn = filename
-                self.img = Image.open(self.fn)
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
                 self.temp = self.img.save("test.ppm","ppm")
                 # self.I = np.asarray(self.img)
                 # l, h = self.img.size
@@ -107,18 +121,34 @@ class DIP(tk.Frame):
                 photo = ImageTk.PhotoImage(file = "test.ppm")
                 self.label2.configure(image=photo)
                 self.label2.image = photo
-
+        elif self.var.get() == 2:
+            if self.pseudovar.get() == 1:
+                self.output = i.scale(i,self.fn, 50)
+                filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
+                self.temp = self.img.save("test.ppm", "ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file="test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
 
 
     def onOpen(self):
         #Open Callback
-        ftypes = [('Image Files', '*.tif *.jpg *.png')]
-        dlg = filedialog.Open(self, filetypes = ftypes)
-        filename = dlg.show()
+        filename = filedialog.askopenfilename(
+            filetypes=[("PNG files", "*.png"), ("JPEG files", "*.jpg"), ("All files", "*.*")])
         self.fn = filename
+        print()
         #print self.fn #prints filename with path here
-        self.setImage()
-    def setImage(self):
+        self.img = Image.open(self.fn)
+        photo = ImageTk.PhotoImage(self.img)
+        self.label1.configure(image=photo)
+        self.label1.image = photo
+    def setImage1(self):
         self.img = Image.open(self.fn)
         photo = ImageTk.PhotoImage(self.img)
         self.label1.configure(image=photo)
