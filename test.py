@@ -65,9 +65,10 @@ class DIP(tk.Frame):
         button4.grid(row=3, column=1)
 
     def setImage(self):
+        ct = ColorTransf()
         if self.var.get()== 1:
             if self.colorvar.get()=='RGB' and self.colorvar2.get()=='CMYK':
-                self.output = ColorTransf.RGBtoCMYK(self.fn)
+                self.output = ct.RGBtoCMYK(self.fn)
                 # print(type(output))
                 #
                 # im = Image.fromarray(self.output,mode='')
@@ -76,11 +77,12 @@ class DIP(tk.Frame):
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
                 self.fn = filename
                 self.img = Image.open(self.fn)
+                self.temp = self.img.save("test.ppm","ppm")
                 # self.I = np.asarray(self.img)
                 # l, h = self.img.size
                 # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
                 # self.parent.geometry(text)
-                photo = ImageTk.PhotoImage(self.img)
+                photo = ImageTk.PhotoImage(file = "test.ppm")
                 self.label2.configure(image=photo)
                 self.label2.image = photo
 

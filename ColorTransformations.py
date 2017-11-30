@@ -3,7 +3,7 @@ import numpy as np
 import math
 class ColorTransf():
 
-    def RGBtoCMYK(filename):
+    def RGBtoCMYK(self,filename):
         img = cv2.imread(filename)
         h, w, c = np.shape(img)
         cmyk_img=np.zeros((h,w,4),dtype="uint8")
@@ -30,9 +30,10 @@ class ColorTransf():
         # print(np.shape(cmyk_img))
         # h,w,c = np.shape(cmyk_img)
         #
-    def CMYKtoRGB(filename):
-        img = cv2.imread(filename)
-        h, w, c = np.shape(img)
+    def CMYKtoRGB(self,filename):
+        cmyk_img = self.RGBtoCMYK(filename)
+        #img = cv2.imread(filename)
+        h, w, c = np.shape(cmyk_img)
         rgb_img = np.zeros((h, w, 3), dtype="uint8")
         print(h, w, c)
         for i in range(h):
@@ -44,11 +45,12 @@ class ColorTransf():
                 rgb_img[i][j][2] = round(255.0 - ((min(1.0, c * (1.0 - k) + k)) * 255.0))
                 rgb_img[i][j][1] = round(255.0 - ((min(1.0, m * (1.0 - k) + k)) * 255.0))
                 rgb_img[i][j][0] = round(255.0 - ((min(1.0, y * (1.0 - k) + k)) * 255.0))
+        cv2.imwrite("test.png", cmyk_img)
         return rgb_img
 
     # cv2.imshow("rgb",rgb_img)
     # cv2.waitKey(0)
-    def RGBtoHSV(filename):
+    def RGBtoHSV(self,filename):
         img = cv2.imread(filename)
         row, col, c = np.shape(img)
         hsv_img = np.zeros((row, col, 3), dtype="uint8")
@@ -88,7 +90,7 @@ class ColorTransf():
                 hsv_img[i][j][2] = v * 255
         return hsv_img
 
-    def HSVtoRGB(filename):
+    def HSVtoRGB(self,filename):
         img = cv2.imread(filename)
         row, col, c = np.shape(img)
         rgb_img = np.zeros((row, col, 3), dtype="uint8")
@@ -144,14 +146,14 @@ class ColorTransf():
                 rgb_img[i][j][0] = int(b * 255)
         return rgb_img
 
-    def CMYKtoHSV(filename):
-        temp_img = CMYKtoRGB(filename)
-        hsv_img = RGBtoHSV(filename)
+    def CMYKtoHSV(self,filename):
+        temp_img = self.CMYKtoRGB(filename)
+        hsv_img = self.RGBtoHSV(filename)
         return hsv_img
 
-    def HSVtoCMYK(filename):
-        temp_img = HSVtoRGB(filename)
-        cmyk_img = RGBtoCMYK(filename)
+    def HSVtoCMYK(self,filename):
+        temp_img = self.HSVtoRGB(filename)
+        cmyk_img = self.RGBtoCMYK(filename)
         return cmyk_img
     # cv2.imshow("cmyk", cmyk_img)
     # cv2.waitKey(0)
