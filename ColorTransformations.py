@@ -4,6 +4,7 @@ import math
 
 
 class ColorTransf():
+
     def RGBtoCMYK(self, filename):
         img = cv2.imread(filename)
         h, w, c = np.shape(img)
@@ -18,15 +19,22 @@ class ColorTransf():
                 m = 1 - g / 255
                 y = 1 - b / 255
                 min_cmy = min(c, m, y)
-                cmyk_img[i][j][0] = 100 * (c - min_cmy) / (1 - min_cmy)
-                cmyk_img[i][j][1] = 100 * (m - min_cmy) / (1 - min_cmy)
-                cmyk_img[i][j][2] = 100 * (y - min_cmy) / (1 - min_cmy)
-                cmyk_img[i][j][3] = 100 * min_cmy
+                if min_cmy==1:
+                    cmyk_img[i][j][0]=0
+                    cmyk_img[i][j][1] = 0
+                    cmyk_img[i][j][2] = 0
+                    cmyk_img[i][j][3] = 0
+                else:
+                    cmyk_img[i][j][0] = 100 * (c - min_cmy) / (1 - min_cmy)
+                    cmyk_img[i][j][1] = 100 * (m - min_cmy) / (1 - min_cmy)
+                    cmyk_img[i][j][2] = 100 * (y - min_cmy) / (1 - min_cmy)
+                    cmyk_img[i][j][3] = 100 * min_cmy
+
         cv2.imwrite("test.png", cmyk_img)
         return cmyk_img
 
-    def CMYKtoRGB(self, filename):
-        cmyk_img = self.RGBtoCMYK(filename)
+    def CMYKtoRGB(self, cmyk_img):
+        #cmyk_img = self.RGBtoCMYK(filename)
         # img = cv2.imread(filename)
         h, w, c = np.shape(cmyk_img)
         rgb_img = np.zeros((h, w, 3), dtype="uint8")

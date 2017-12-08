@@ -17,8 +17,7 @@ class DIP(tk.Frame):
         self.parent.title("Color Image Processing")
         self.pack(fill = tk.BOTH, expand = 1)
 
-        menubar = tk.Menu(self.parent)
-        self.parent.config(menu = menubar)
+
         self.browseButton = tk.Button(self,text = "Browse",command = self.onOpen)
         self.browseButton.grid(row =0,column=0)
         self.var = tk.IntVar()
@@ -31,7 +30,7 @@ class DIP(tk.Frame):
         self.buttonradio1.grid(row=1, column=0)
         self.buttonradio2.grid(row=1, column=1)
         self.buttonradio3.grid(row=1, column=2)
-        self.label1 = tk.Label(self, border = 25)
+        self.label1 = tk.Label(self, border = 5,bg = 'black')
         self.label2 = tk.Label(self, border = 25)
         self.label1.grid(row = 6, column = 0)
         self.label2.grid(row = 6, column = 1)
@@ -104,7 +103,19 @@ class DIP(tk.Frame):
                 self.label2.configure(image=photo)
                 self.label2.image = photo
             elif self.colorvar.get()=='CMYK' and self.colorvar2.get()=='RGB':
-                self.output = ct.CMYKtoRGB(self.fn)
+                self.output = ct.RGBtoCMYK(self.fn)
+                filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
+                self.temp = self.img.save("test.ppm", "ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file="test.ppm")
+                self.label1.configure(image=photo)
+                self.label1.image = photo
+                self.output = ct.CMYKtoRGB(self.output)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
                 self.fnout = filename
                 self.img = Image.open(self.fnout)
@@ -132,6 +143,19 @@ class DIP(tk.Frame):
         elif self.var.get() == 2:
             if self.pseudovar.get() == 1:
                 self.output = i.scale(i,self.fn, 50)
+                filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
+                self.fnout = filename
+                self.img = Image.open(self.fnout)
+                self.temp = self.img.save("test.ppm", "ppm")
+                # self.I = np.asarray(self.img)
+                # l, h = self.img.size
+                # text = str(2 * l + 100) + "x" + str(h + 50) + "+0+0"
+                # self.parent.geometry(text)
+                photo = ImageTk.PhotoImage(file="test.ppm")
+                self.label2.configure(image=photo)
+                self.label2.image = photo
+            elif self.pseudovar.get() == 2:
+                self.output = i.transform(i,self.fn)
                 filename = "C:/Users/Roopa/PycharmProjects/ColorImageProc/test.png"
                 self.fnout = filename
                 self.img = Image.open(self.fnout)
@@ -194,8 +218,10 @@ class DIP(tk.Frame):
 def main():
 
     root = tk.Tk()
+    root.configure(background='red')
     DIP(root)
-    root.geometry("320x240")
+
+    root.geometry("800x600")
     root.mainloop()
 
 
